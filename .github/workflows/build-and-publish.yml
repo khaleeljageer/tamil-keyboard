@@ -1,0 +1,137 @@
+name: Build and Publish Debian Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+      
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y devscripts build-essential debhelper
+    
+    - name: Build tamil-99-keyboard
+      run: |
+        cd tamil-99-keyboard
+        dpkg-buildpackage -b -us -uc
+        cd ..
+    
+    - name: Build tamil-phonetic-keyboard
+      run: |
+        cd tamil-phonetic-keyboard
+        dpkg-buildpackage -b -us -uc
+        cd ..
+    
+    - name: Create repository structure
+      run: |
+        mkdir -p docs/pool/main/t/tamil-99-keyboard
+        mkdir -p docs/pool/main/t/tamil-phonetic-keyboard
+        mkdir -p docs/dists/stable/main/binary-amd64
+    
+    - name: Copy packages
+      run: |
+        cp tamil-99-keyboard_*.deb docs/pool/main/t/tamil-99-keyboard/ || true
+        cp tamil-phonetic-keyboard_*.deb docs/pool/main/t/tamil-phonetic-keyboard/ || true
+    
+    - name: Generate Packages file
+      run: |
+        cd docs
+        dpkg-scanpackages --arch amd64 pool/ /dev/null | gzip -9c > dists/stable/main/binary-amd64/Packages.gz
+    
+    - name: Generate Release file
+      run: |
+        cd docs/dists/stable
+        cat > Release <<EOF
+        Origin: Kaniyam Foundation
+        Label: Tamil Keyboard Repository
+        Codename: stable
+        Architectures: amd64
+        Components: main
+        Description: Tamil keyboard layout packages for Debian/Ubuntu
+        Date: $(date -u -R)
+        EOF
+    
+    - name: Setup GPG
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      run: |
+        if [ -n "$GPG_PRIVATE_KEY" ]; then
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          cd docs/dists/stable
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs -o Release.gpg Release
+          else
+            gpg --batch -abs -o Release.gpg Release
+          fi
+        else
+          echo "Warning: GPG_PRIVATE_KEY not set, skipping signing"
+        fi
+    
+    - name: Create InRelease file
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      run: |
+        if [ -n "$GPG_PRIVATE_KEY" ]; then
+          cd docs/dists/stable
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs --clearsign -o InRelease Release
+          else
+            gpg --batch -abs --clearsign -o InRelease Release
+          fi
+        fi
+    
+    - name: Get version/tag
+      id: version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          VERSION="${GITHUB_REF#refs/tags/}"
+        else
+          VERSION="latest-$(date +%Y%m%d-%H%M%S)"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+    
+    - name: Prepare repository
+      run: |
+        mkdir -p gh-pages
+        cd gh-pages
+        git init
+        git checkout -b gh-pages || git checkout gh-pages
+        git remote add origin https://github.com/${{ github.repository }}.git || git remote set-url origin https://github.com/${{ github.repository }}.git
+        git fetch origin gh-pages || true
+        git reset --hard origin/gh-pages || true
+    
+    - name: Update repository
+      run: |
+        cp -r docs/* gh-pages/
+        cd gh-pages
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add .
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update repository for ${{ steps.version.outputs.version }}"
+          git push origin gh-pages
+        fi
+    
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          tamil-99-keyboard_*.deb
+          tamil-phonetic-keyboard_*.deb
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

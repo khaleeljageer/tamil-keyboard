@@ -1,0 +1,32 @@
+# Debian build artifacts
+*.deb
+*.dsc
+*.changes
+*.buildinfo
+*.tar.gz
+*.tar.xz
+*.tar.bz2
+
+# Build directories
+tamil-99-keyboard/debian/files
+tamil-99-keyboard/debian/.debhelper/
+tamil-99-keyboard/debian/tamil-99-keyboard/
+tamil-phonetic-keyboard/debian/files
+tamil-phonetic-keyboard/debian/.debhelper/
+tamil-phonetic-keyboard/debian/tamil-phonetic-keyboard/
+
+# GitHub Pages repository (handled by gh-pages branch)
+docs/pool/
+docs/dists/
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# GPG keys (never commit these!)
+*.asc
+private-key.asc
+public-key.asc
+

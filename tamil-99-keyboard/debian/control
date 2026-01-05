@@ -1,0 +1,19 @@
+Source: tamil-99-keyboard
+Section: utils
+Priority: optional
+Maintainer: Khaleel Jageer <jskcse4@gmail.com>
+Build-Depends: debhelper (>= 11)
+Standards-Version: 4.1.4
+Homepage: https://github.com/khaleeljageer/tamil-keyboard
+
+Package: tamil-99-keyboard
+Architecture: all
+Depends: ${misc:Depends}, ibus, ibus-m17n, ibus-gtk, ibus-gtk3, dconf-gsettings-backend | gsettings-backend
+Description: Tamil 99 keyboard layout for IBus
+ This package installs and configures the Tamil 99 keyboard layout
+ for IBus input method framework. It automatically sets up the keyboard
+ layout and configures the system to use it.
+ .
+ After installation, Tamil 99 keyboard will be available in your input
+ method settings.
+
