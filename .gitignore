@@ -6,27 +6,52 @@
 *.tar.gz
 *.tar.xz
 *.tar.bz2
+*.build
 
-# Build directories
-tamil-99-keyboard/debian/files
-tamil-99-keyboard/debian/.debhelper/
+# Build directories and files
+**/debian/files
+**/debian/.debhelper/
+**/debian/*/DEBIAN/
+**/debian/*.substvars
+**/debian/debhelper-build-stamp
+**/debian/*/usr/
 tamil-99-keyboard/debian/tamil-99-keyboard/
-tamil-phonetic-keyboard/debian/files
-tamil-phonetic-keyboard/debian/.debhelper/
 tamil-phonetic-keyboard/debian/tamil-phonetic-keyboard/
 
 # GitHub Pages repository (handled by gh-pages branch)
 docs/pool/
 docs/dists/
+dists/
+pool/
 
-# Temporary files
+# GPG keys and repository keys (never commit these!)
+*.asc
+*.gpg
+private-key.asc
+public-key.asc
+KEY.gpg
+
+# Editor and IDE files
 *.swp
 *.swo
 *~
 .DS_Store
+.vscode/
+.idea/
+*.sublime-*
 
-# GPG keys (never commit these!)
-*.asc
-private-key.asc
-public-key.asc
+# Python cache (if any Python scripts)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Log files
+*.log
+
+# Backup files
+*.bak
+*.backup
+*~
 

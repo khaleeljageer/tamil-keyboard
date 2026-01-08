@@ -26,38 +26,113 @@ if command_exists im-config; then
     im-config -n ibus 2>/dev/null || true
 fi
 
-# Set input sources for Tamil Phonetic
-if command_exists gsettings; then
-    # Try to detect the real user (not root)
-    REAL_USER=""
-    if [ -n "$SUDO_USER" ]; then
-        REAL_USER="$SUDO_USER"
-    elif [ -n "$USER" ] && [ "$USER" != "root" ]; then
-        REAL_USER="$USER"
-    elif [ -n "$PKEXEC_UID" ]; then
-        REAL_USER=$(getent passwd "$PKEXEC_UID" | cut -d: -f1)
+# Function to configure input sources for GNOME X11
+configure_input_sources() {
+    local user=$1
+    local keyboard_type=$2  # "tamil99" or "phonetic"
+    
+    if [ -z "$user" ] || [ "$user" = "root" ]; then
+        return
     fi
     
-    if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
-        # Set for the detected user
-        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$REAL_USER")/bus" 2>/dev/null || true
-        sudo -u "$REAL_USER" env DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$REAL_USER")/bus" gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'in+eng'), ('ibus', 'm17n:ta:phonetic')]" 2>/dev/null || true
+    local user_id=$(id -u "$user" 2>/dev/null)
+    if [ -z "$user_id" ]; then
+        return
     fi
     
-    # Also try to set for all logged-in users (for system-wide installation)
-    for user_dir in /home/*; do
-        if [ -d "$user_dir" ] && [ -d "$user_dir/.config" ]; then
-            user=$(basename "$user_dir")
-            if id "$user" >/dev/null 2>&1; then
-                export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$user")/bus" 2>/dev/null || true
-                sudo -u "$user" env DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$user")/bus" gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'in+eng'), ('ibus', 'm17n:ta:phonetic')]" 2>/dev/null || true
+    local dbus_address="unix:path=/run/user/$user_id/bus"
+    local ibus_source="m17n:ta:$keyboard_type"
+    
+    # Check if running on X11 (required for GNOME)
+    local xdg_session_type=""
+    if [ -f "/run/user/$user_id/systemd/environment" ]; then
+        xdg_session_type=$(grep "^XDG_SESSION_TYPE=" "/run/user/$user_id/systemd/environment" 2>/dev/null | cut -d= -f2)
+    fi
+    
+    # Fallback: try to detect from user's environment
+    if [ -z "$xdg_session_type" ]; then
+        local user_env=$(sudo -u "$user" env 2>/dev/null)
+        xdg_session_type=$(echo "$user_env" | grep "^XDG_SESSION_TYPE=" | cut -d= -f2 | head -1)
+    fi
+    
+    # Only proceed if X11 session
+    if [ "$xdg_session_type" != "x11" ]; then
+        echo "Warning: This package only supports GNOME with X11 session. Current session: $xdg_session_type"
+        return 1
+    fi
+    
+    # Check if GNOME is running
+    local desktop_env=""
+    if [ -f "/run/user/$user_id/systemd/environment" ]; then
+        desktop_env=$(grep "^XDG_CURRENT_DESKTOP=" "/run/user/$user_id/systemd/environment" 2>/dev/null | cut -d= -f2)
+    fi
+    
+    if [ -z "$desktop_env" ]; then
+        local user_env=$(sudo -u "$user" env 2>/dev/null)
+        desktop_env=$(echo "$user_env" | grep "^XDG_CURRENT_DESKTOP=" | cut -d= -f2 | head -1)
+    fi
+    
+    # Check if GNOME (case insensitive)
+    if ! echo "$desktop_env" | grep -qi "gnome"; then
+        echo "Warning: This package only supports GNOME desktop environment. Current desktop: $desktop_env"
+        return 1
+    fi
+    
+    # Configure using gsettings (GNOME X11 method)
+    if command_exists gsettings; then
+        export DBUS_SESSION_BUS_ADDRESS="$dbus_address" 2>/dev/null || true
+        
+        # Set input sources for GNOME
+        if sudo -u "$user" env DBUS_SESSION_BUS_ADDRESS="$dbus_address" gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'in+eng'), ('ibus', '$ibus_source')]" 2>/dev/null; then
+            # Verify it was set correctly
+            sleep 0.5
+            local current_sources=$(sudo -u "$user" env DBUS_SESSION_BUS_ADDRESS="$dbus_address" gsettings get org.gnome.desktop.input-sources sources 2>/dev/null)
+            if echo "$current_sources" | grep -q "$ibus_source"; then
+                return 0
             fi
         fi
-    done
-else
-    echo "gsettings not found. You may need to manually configure input sources."
-    echo "Run: gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'in+eng'), ('ibus', 'm17n:ta:phonetic')]\""
+    fi
+    
+    return 1
+}
+
+# Set input sources for Tamil Phonetic
+# Try to detect the real user (not root)
+REAL_USER=""
+if [ -n "$SUDO_USER" ]; then
+    REAL_USER="$SUDO_USER"
+elif [ -n "$USER" ] && [ "$USER" != "root" ]; then
+    REAL_USER="$USER"
+elif [ -n "$PKEXEC_UID" ]; then
+    REAL_USER=$(getent passwd "$PKEXEC_UID" | cut -d: -f1)
 fi
+
+# Configure for detected user
+if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
+    configure_input_sources "$REAL_USER" "phonetic"
+fi
+
+# Also try to set for all logged-in users (for system-wide installation)
+for user_dir in /home/*; do
+    if [ -d "$user_dir" ] && [ -d "$user_dir/.config" ]; then
+        user=$(basename "$user_dir")
+        if id "$user" >/dev/null 2>&1; then
+            configure_input_sources "$user" "phonetic"
+        fi
+    fi
+done
+
+# Provide manual instructions if automatic configuration failed
+echo ""
+echo "Note: This package only supports GNOME desktop with X11 session."
+echo ""
+echo "If keyboard layout is not automatically configured, you can manually set it:"
+echo "  gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'in+eng'), ('ibus', 'm17n:ta:phonetic')]\""
+echo ""
+echo "Or via GUI:"
+echo "  Settings > Keyboard > Input Sources > Add Tamil Phonetic"
+echo ""
+echo "For other desktop environments or Wayland, please configure manually using ibus-setup."
 
 # Restart ibus if it's running
 if pgrep ibus-daemon >/dev/null 2>&1; then

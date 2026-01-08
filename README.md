@@ -106,6 +106,36 @@ Both packages automatically:
    - `tamil-phonetic-keyboard`: Configures Tamil Phonetic layout
 6. Restart IBus to apply changes
 
+### System Requirements
+
+**Important:** These packages only support **GNOME desktop environment with X11 display server**.
+
+#### Supported Configuration:
+
+- **GNOME Desktop** with **X11 Session**: Fully supported with automatic configuration
+- **Tested on**: Ubuntu 20.04, 22.04, 24.04 (GNOME X11)
+- **Tested on**: Pop!_OS 22.04 (GNOME X11)
+
+#### Not Supported:
+
+- **Wayland sessions**: Manual configuration required
+- **Other desktop environments** (KDE, XFCE, MATE, etc.): Manual configuration required
+- **Other display servers**: Manual configuration required
+
+#### Manual Configuration for Unsupported Systems:
+
+If you're using Wayland or a different desktop environment, you can manually configure the keyboard:
+
+```bash
+# For GNOME Wayland or other GTK-based environments:
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'in+eng'), ('ibus', 'm17n:ta:tamil99')]"
+
+# Or use ibus-setup GUI:
+ibus-setup
+```
+
+The installation script will detect if you're not using GNOME X11 and provide appropriate warnings and instructions.
+
 ## Setting Up an APT Repository
 
 To make these packages available via `apt install`, you need to set up a Debian repository:
