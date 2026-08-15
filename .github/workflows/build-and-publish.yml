@@ -17,7 +17,7 @@ jobs:
     - name: Set up build environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y devscripts build-essential debhelper
+        sudo apt-get install -y devscripts build-essential debhelper apt-utils
     
     - name: Build tamil-99-keyboard
       run: |
@@ -39,27 +39,35 @@ jobs:
     
     - name: Copy packages
       run: |
-        cp tamil-99-keyboard_*.deb docs/pool/main/t/tamil-99-keyboard/ || true
-        cp tamil-phonetic-keyboard_*.deb docs/pool/main/t/tamil-phonetic-keyboard/ || true
-    
+        cp tamil-99-keyboard_*.deb docs/pool/main/t/tamil-99-keyboard/
+        cp tamil-phonetic-keyboard_*.deb docs/pool/main/t/tamil-phonetic-keyboard/
+
     - name: Generate Packages file
       run: |
         cd docs
-        dpkg-scanpackages --arch amd64 pool/ /dev/null | gzip -9c > dists/stable/main/binary-amd64/Packages.gz
-    
+        # apt resolves compression variants from the uncompressed entry, so ship
+        # both Packages and Packages.gz and list both in Release.
+        dpkg-scanpackages --arch amd64 pool/ /dev/null > dists/stable/main/binary-amd64/Packages
+        gzip -9kf dists/stable/main/binary-amd64/Packages
+
     - name: Generate Release file
       run: |
         cd docs/dists/stable
-        cat > Release <<EOF
-        Origin: Kaniyam Foundation
-        Label: Tamil Keyboard Repository
-        Codename: stable
-        Architectures: amd64
-        Components: main
-        Description: Tamil keyboard layout packages for Debian/Ubuntu
-        Date: $(date -u -R)
-        EOF
-    
+        # apt-ftparchive emits the MD5Sum/SHA256 blocks covering every index file.
+        # Without them the GPG signature guarantees nothing about the package list
+        # and apt rejects the repo as "weak security information".
+        apt-ftparchive \
+          -o APT::FTPArchive::Release::Origin="Kaniyam Foundation" \
+          -o APT::FTPArchive::Release::Label="Tamil Keyboard Repository" \
+          -o APT::FTPArchive::Release::Suite="stable" \
+          -o APT::FTPArchive::Release::Codename="stable" \
+          -o APT::FTPArchive::Release::Architectures="amd64" \
+          -o APT::FTPArchive::Release::Components="main" \
+          -o APT::FTPArchive::Release::Description="Tamil keyboard layout packages for Debian/Ubuntu" \
+          release . > Release.tmp
+        mv Release.tmp Release
+        cat Release
+
     - name: Setup GPG
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
