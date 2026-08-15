@@ -3,7 +3,7 @@ Upstream-Name: tamil-phonetic-keyboard
 Source: https://github.com/khaleeljageer/tamil-keyboard
 
 Files: *
-Copyright: $(date +%Y) Khaleel Jageer
+Copyright: 2026 Khaleel Jageer
 License: GPL-3.0+
 
 License: GPL-3.0+

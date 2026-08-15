@@ -1,7 +1,6 @@
-tamil-phonetic-keyboard (1.0.0-1) unstable; urgency=medium
+tamil-phonetic-keyboard (1.0.0) unstable; urgency=medium
 
   * Initial release
   * Tamil Phonetic keyboard layout configuration for IBus
 
- -- Khaleel Jageer <jskcse4@gmail.com>  $(date -R)
-
+ -- Khaleel Jageer <jskcse4@gmail.com>  Fri, 14 Aug 2026 21:07:01 +0530

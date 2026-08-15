@@ -2,8 +2,9 @@ Source: tamil-99-keyboard
 Section: utils
 Priority: optional
 Maintainer: Khaleel Jageer <jskcse4@gmail.com>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.4
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.2
+Rules-Requires-Root: no
 Homepage: https://github.com/khaleeljageer/tamil-keyboard
 
 Package: tamil-99-keyboard
