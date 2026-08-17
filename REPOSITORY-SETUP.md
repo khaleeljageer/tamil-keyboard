@@ -52,8 +52,7 @@ cd /home/zs-khaleel/Documents/tamil-keyboard
 
 ```bash
 cd $REPO_DIR
-reprepro includedeb stable /path/to/tamil-99-keyboard_*.deb
-reprepro includedeb stable /path/to/tamil-phonetic-keyboard_*.deb
+reprepro includedeb stable /path/to/tamil-keyboard_*.deb
 ```
 
 ### 7. Export GPG Public Key
@@ -91,8 +90,7 @@ wget -qO - http://your-server:8000/KEY.gpg | sudo gpg --dearmor -o /etc/apt/trus
 
 # Update and install
 sudo apt update
-sudo apt install tamil-99-keyboard
-sudo apt install tamil-phonetic-keyboard
+sudo apt install tamil-keyboard
 ```
 
 ## Alternative: Simple Directory-Based Repository
@@ -109,8 +107,7 @@ mkdir -p $REPO_DIR/pool/main
 ### 2. Copy Packages
 
 ```bash
-cp tamil-99-keyboard_*.deb $REPO_DIR/pool/main/
-cp tamil-phonetic-keyboard_*.deb $REPO_DIR/pool/main/
+cp tamil-keyboard_*.deb $REPO_DIR/pool/main/
 ```
 
 ### 3. Generate Packages Index
@@ -153,12 +150,10 @@ When you update packages:
 ./build-packages.sh
 
 # Remove old versions from repository
-reprepro remove stable tamil-99-keyboard
-reprepro remove stable tamil-phonetic-keyboard
+reprepro remove stable tamil-keyboard
 
 # Add new versions
-reprepro includedeb stable /path/to/tamil-99-keyboard_*.deb
-reprepro includedeb stable /path/to/tamil-phonetic-keyboard_*.deb
+reprepro includedeb stable /path/to/tamil-keyboard_*.deb
 ```
 
 ## Testing Locally
@@ -170,11 +165,11 @@ You can test the packages locally without setting up a full repository:
 ./build-packages.sh
 
 # Install directly
-sudo dpkg -i tamil-99-keyboard_*.deb
+sudo dpkg -i tamil-keyboard_*.deb
 sudo apt-get install -f  # Install dependencies
 
 # Or use apt with local file
-sudo apt-get install ./tamil-99-keyboard_*.deb
+sudo apt-get install ./tamil-keyboard_*.deb
 ```
 
 ## Troubleshooting

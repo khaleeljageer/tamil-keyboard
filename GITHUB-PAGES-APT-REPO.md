@@ -17,7 +17,7 @@ This guide explains how to use GitHub Pages to host a Debian/APT repository for 
 
 **Best Practice:**
 1. **Main branch** (`main`/`master`): Contains only source code
-   - Source package directories (`tamil-99-keyboard/`, `tamil-phonetic-keyboard/`)
+   - Source package directories (`tamil-keyboard/`, `tamil-keyboard/`)
    - Build scripts and documentation
    - GitHub Actions workflows
    - **No `.deb` files committed**
@@ -59,16 +59,16 @@ tamil-keyboard/
 ├── .github/
 │   └── workflows/
 │       └── build-and-publish.yml    # Automated build workflow
-├── tamil-99-keyboard/                # Source package
+├── tamil-keyboard/                # Source package
 │   └── debian/
-├── tamil-phonetic-keyboard/          # Source package
+├── tamil-keyboard/          # Source package
 │   └── debian/
 ├── docs/                              # GitHub Pages repository
 │   ├── pool/
 │   │   └── main/
 │   │       └── t/
-│   │           ├── tamil-99-keyboard/
-│   │           └── tamil-phonetic-keyboard/
+│   │           ├── tamil-keyboard/
+│   │           └── tamil-keyboard/
 │   └── dists/
 │       └── stable/
 │           └── main/
@@ -120,28 +120,26 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y devscripts build-essential debhelper
     
-    - name: Build tamil-99-keyboard
+    - name: Build tamil-keyboard
       run: |
-        cd tamil-99-keyboard
+        cd tamil-keyboard
         dpkg-buildpackage -b -us -uc
         cd ..
     
-    - name: Build tamil-phonetic-keyboard
+    - name: Build tamil-keyboard
       run: |
-        cd tamil-phonetic-keyboard
+        cd tamil-keyboard
         dpkg-buildpackage -b -us -uc
         cd ..
     
     - name: Create repository structure
       run: |
-        mkdir -p docs/pool/main/t/tamil-99-keyboard
-        mkdir -p docs/pool/main/t/tamil-phonetic-keyboard
+        mkdir -p docs/pool/main/t/tamil-keyboard
         mkdir -p docs/dists/stable/main/binary-amd64
     
     - name: Copy packages
       run: |
-        cp tamil-99-keyboard_*.deb docs/pool/main/t/tamil-99-keyboard/
-        cp tamil-phonetic-keyboard_*.deb docs/pool/main/t/tamil-phonetic-keyboard/
+        cp tamil-keyboard_*.deb docs/pool/main/t/tamil-keyboard/
     
     - name: Generate Packages file
       run: |
@@ -194,8 +192,7 @@ jobs:
 Create the initial repository structure:
 
 ```bash
-mkdir -p docs/pool/main/t/tamil-99-keyboard
-mkdir -p docs/pool/main/t/tamil-phonetic-keyboard
+mkdir -p docs/pool/main/t/tamil-keyboard
 mkdir -p docs/dists/stable/main/binary-amd64
 touch docs/.gitkeep
 ```
@@ -247,8 +244,7 @@ wget -qO - https://khaleeljageer.github.io/tamil-keyboard/public-key.asc | sudo 
 
 # Update and install
 sudo apt update
-sudo apt install tamil-99-keyboard
-sudo apt install tamil-phonetic-keyboard
+sudo apt install tamil-keyboard
 ```
 
 ### Alternative: Using GitHub Releases
@@ -258,8 +254,8 @@ If you prefer to use GitHub Releases instead of GitHub Pages:
 1. Upload `.deb` files to GitHub Releases
 2. Users download and install manually:
    ```bash
-   wget https://github.com/khaleeljageer/tamil-keyboard/releases/download/v1.0.0/tamil-99-keyboard_1.0.0-1_all.deb
-   sudo dpkg -i tamil-99-keyboard_1.0.0-1_all.deb
+   wget https://github.com/khaleeljageer/tamil-keyboard/releases/download/v1.0.0/tamil-keyboard_1.0.0-1_all.deb
+   sudo dpkg -i tamil-keyboard_1.0.0-1_all.deb
    sudo apt-get install -f
    ```
 
@@ -319,7 +315,7 @@ wget -qO - https://khaleeljageer.github.io/tamil-keyboard/public-key.asc | sudo 
 
 # Install
 sudo apt update
-sudo apt install tamil-99-keyboard
+sudo apt install tamil-keyboard
 ```
 
 ### Manual Installation
@@ -327,7 +323,7 @@ sudo apt install tamil-99-keyboard
 Download from [Releases](https://github.com/khaleeljageer/tamil-keyboard/releases) and install:
 
 ```bash
-sudo dpkg -i tamil-99-keyboard_*.deb
+sudo dpkg -i tamil-keyboard_*.deb
 sudo apt-get install -f
 ```
 ```

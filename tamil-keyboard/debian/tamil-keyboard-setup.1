@@ -1,0 +1,58 @@
+.TH TAMIL\-KEYBOARD\-SETUP 1 "August 2026" "tamil\-keyboard 1.0.0" "User Commands"
+.SH NAME
+tamil\-keyboard\-setup \- enable a Tamil input method in the current session
+.SH SYNOPSIS
+.B tamil\-keyboard\-setup
+.I layout
+.br
+.B tamil\-keyboard\-setup \-\-remove
+.I layout
+.br
+.B tamil\-keyboard\-setup \-\-list
+.SH DESCRIPTION
+.B tamil\-keyboard\-setup
+adds a Tamil input method to the input sources of the desktop session it is
+run from. The layouts themselves are provided by
+.BR ibus\-m17n ;
+this command only selects one.
+.PP
+It must be run as your own user, not through
+.BR sudo ,
+because it configures the session it inherits. That is also why it works on
+Wayland as well as X11.
+.PP
+The requested layout is appended to your existing input sources. Nothing is
+removed or replaced, and running the command twice is harmless.
+.SH OPTIONS
+.TP
+.BI \-\-remove " layout"
+Remove the layout from your input sources.
+.TP
+.B \-\-list
+Print the current input sources.
+.TP
+.B \-h ", " \-\-help
+Show a usage summary.
+.SH LAYOUTS
+.TP
+.B tamil99
+Tamil 99 keyboard, corresponding to the m17n:ta:tamil99 input method.
+.TP
+.B phonetic
+Tamil Phonetic keyboard, corresponding to the m17n:ta:phonetic input method.
+.SH EXAMPLES
+Add the Tamil 99 layout:
+.PP
+.RS
+.B tamil\-keyboard\-setup tamil99
+.RE
+.PP
+Switch between input sources with Super+Space.
+.SH EXIT STATUS
+Returns 0 on success and 1 if the layout name is unknown, the command is run
+as root, or the desktop does not use GNOME input sources.
+.SH SEE ALSO
+.BR ibus\-setup (1),
+.BR gsettings (1)
+.SH AUTHOR
+Khaleel Jageer <jskcse4@gmail.com>

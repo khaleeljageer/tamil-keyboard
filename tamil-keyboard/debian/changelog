@@ -1,0 +1,11 @@
+tamil-keyboard (1.0.0) unstable; urgency=medium
+
+  * Initial release, replacing the tamil-99-keyboard and
+    tamil-phonetic-keyboard packages.
+  * Ship tamil-keyboard-setup instead of configuring input sources from
+    the postinst. Configuration is now user-initiated and session-local,
+    so it works on Wayland and on non-GNOME desktops.
+  * Add layouts alongside existing input sources rather than replacing
+    them.
+
+ -- Khaleel Jageer <jskcse4@gmail.com>  Sat, 15 Aug 2026 07:00:00 +0530

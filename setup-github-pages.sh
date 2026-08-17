@@ -13,13 +13,11 @@ echo ""
 
 # Create repository structure
 echo "Creating repository directories..."
-mkdir -p docs/pool/main/t/tamil-99-keyboard
-mkdir -p docs/pool/main/t/tamil-phonetic-keyboard
+mkdir -p docs/pool/main/t/tamil-keyboard
 mkdir -p docs/dists/stable/main/binary-amd64
 
 # Create placeholder files
-touch docs/pool/main/t/tamil-99-keyboard/.gitkeep
-touch docs/pool/main/t/tamil-phonetic-keyboard/.gitkeep
+touch docs/pool/main/t/tamil-keyboard/.gitkeep
 touch docs/dists/stable/main/binary-amd64/.gitkeep
 
 # Create README for docs
@@ -43,7 +41,13 @@ echo "deb https://khaleeljageer.github.io/tamil-keyboard stable main" | sudo tee
 wget -qO - https://khaleeljageer.github.io/tamil-keyboard/public-key.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/tamil-keyboard.gpg
 
 sudo apt update
-sudo apt install tamil-99-keyboard
+sudo apt install tamil-keyboard
+```
+
+Then enable a layout as your normal user:
+
+```bash
+tamil-keyboard-setup tamil99
 ```
 
 This repository is automatically updated by GitHub Actions when new releases are tagged.

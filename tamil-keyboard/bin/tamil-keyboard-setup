@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# Add or remove a Tamil input method in the current desktop session.
+#
+# This runs as the ordinary user inside their own session, so it picks up the
+# real session bus. That is what lets it work on Wayland as well as X11, and
+# on any desktop that uses the GNOME input-sources schema.
+
+set -e
+
+SCHEMA="org.gnome.desktop.input-sources"
+KEY="sources"
+PROG="$(basename "$0")"
+
+usage() {
+    cat <<EOF
+Usage: $PROG <layout>            add a Tamil layout to your input sources
+       $PROG --remove <layout>   remove it again
+       $PROG --list              show your current input sources
+
+Layouts:
+  tamil99    Tamil 99 keyboard
+  phonetic   Tamil Phonetic keyboard
+
+The layout is added alongside your existing input sources; nothing is
+replaced. Switch between sources with Super+Space.
+EOF
+}
+
+die() {
+    echo "$PROG: $*" >&2
+    exit 1
+}
+
+# Sets IM rather than echoing it: die() inside a command substitution would
+# only kill the subshell, leaving the caller to carry on with an empty name.
+resolve_layout() {
+    case "$1" in
+        tamil99)  IM="m17n:ta:tamil99" ;;
+        phonetic) IM="m17n:ta:phonetic" ;;
+        *)        die "unknown layout '$1' (expected 'tamil99' or 'phonetic')" ;;
+    esac
+}
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+check_session() {
+    if [ "$(id -u)" -eq 0 ]; then
+        die "run this as your normal user, not with sudo -- it configures your own session"
+    fi
+
+    command_exists gsettings || die "gsettings not found; install libglib2.0-bin"
+
+    if ! gsettings writable "$SCHEMA" "$KEY" >/dev/null 2>&1; then
+        die "the $SCHEMA schema is unavailable, so this desktop does not use
+GNOME input sources. Configure the layout with ibus-setup instead."
+    fi
+}
+
+# gsettings prints the array as "[('xkb', 'us'), ...]", or "@a(ss) []" when it
+# is empty. Strip the brackets and hand back just the tuples.
+current_sources() {
+    local raw inner
+    raw=$(gsettings get "$SCHEMA" "$KEY")
+    inner=${raw#*[}
+    inner=${inner%]*}
+    echo "$inner"
+}
+
+report_ibus_state() {
+    if ! pgrep -x ibus-daemon >/dev/null 2>&1; then
+        echo ""
+        echo "Note: ibus-daemon is not running, so the layout will not appear yet."
+        echo "Log out and back in, or start it with: ibus-daemon -drx"
+    fi
+}
+
+add_layout() {
+    local im=$1 inner entry
+    [ -n "$im" ] || die "internal error: no input method resolved"
+    entry="('ibus', '$im')"
+    inner=$(current_sources)
+
+    case "$inner" in
+        *"$entry"*)
+            echo "$im is already in your input sources; nothing to do."
+            return 0
+            ;;
+    esac
+
+    if [ -z "$inner" ]; then
+        gsettings set "$SCHEMA" "$KEY" "[$entry]"
+    else
+        gsettings set "$SCHEMA" "$KEY" "[$inner, $entry]"
+    fi
+
+    echo "Added $im to your input sources."
+    report_ibus_state
+}
+
+remove_layout() {
+    local im=$1 inner entry new
+    [ -n "$im" ] || die "internal error: no input method resolved"
+    entry="('ibus', '$im')"
+    inner=$(current_sources)
+
+    if [ "$inner" = "$entry" ]; then
+        new=""
+    elif [[ "$inner" == *"$entry, "* ]]; then
+        new=${inner/"$entry, "/}
+    elif [[ "$inner" == *", $entry"* ]]; then
+        new=${inner/", $entry"/}
+    else
+        echo "$im is not in your input sources; nothing to do."
+        return 0
+    fi
+
+    gsettings set "$SCHEMA" "$KEY" "[$new]"
+    echo "Removed $im from your input sources."
+}
+
+case "${1:-}" in
+    "" | -h | --help)
+        usage
+        [ -n "${1:-}" ] || exit 1
+        exit 0
+        ;;
+    --list)
+        check_session
+        gsettings get "$SCHEMA" "$KEY"
+        ;;
+    --remove)
+        [ -n "${2:-}" ] || die "--remove needs a layout name"
+        resolve_layout "$2"
+        check_session
+        remove_layout "$IM"
+        ;;
+    -*)
+        die "unknown option '$1'"
+        ;;
+    *)
+        resolve_layout "$1"
+        check_session
+        add_layout "$IM"
+        ;;
+esac

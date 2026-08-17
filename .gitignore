@@ -15,8 +15,7 @@
 **/debian/*.substvars
 **/debian/debhelper-build-stamp
 **/debian/*/usr/
-tamil-99-keyboard/debian/tamil-99-keyboard/
-tamil-phonetic-keyboard/debian/tamil-phonetic-keyboard/
+tamil-keyboard/debian/tamil-keyboard/
 
 # GitHub Pages repository (handled by gh-pages branch)
 docs/pool/

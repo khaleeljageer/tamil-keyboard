@@ -19,28 +19,20 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y devscripts build-essential debhelper apt-utils
     
-    - name: Build tamil-99-keyboard
+    - name: Build tamil-keyboard
       run: |
-        cd tamil-99-keyboard
+        cd tamil-keyboard
         dpkg-buildpackage -b -us -uc
         cd ..
-    
-    - name: Build tamil-phonetic-keyboard
-      run: |
-        cd tamil-phonetic-keyboard
-        dpkg-buildpackage -b -us -uc
-        cd ..
-    
+
     - name: Create repository structure
       run: |
-        mkdir -p docs/pool/main/t/tamil-99-keyboard
-        mkdir -p docs/pool/main/t/tamil-phonetic-keyboard
+        mkdir -p docs/pool/main/t/tamil-keyboard
         mkdir -p docs/dists/stable/main/binary-amd64
-    
+
     - name: Copy packages
       run: |
-        cp tamil-99-keyboard_*.deb docs/pool/main/t/tamil-99-keyboard/
-        cp tamil-phonetic-keyboard_*.deb docs/pool/main/t/tamil-phonetic-keyboard/
+        cp tamil-keyboard_*.deb docs/pool/main/t/tamil-keyboard/
 
     - name: Generate Packages file
       run: |
@@ -138,8 +130,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          tamil-99-keyboard_*.deb
-          tamil-phonetic-keyboard_*.deb
+          tamil-keyboard_*.deb
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
