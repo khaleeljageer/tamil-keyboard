@@ -129,15 +129,14 @@ jobs:
       run: |
         # "docs/." rather than "docs/*" so dotfiles such as .nojekyll come too.
         cp -r docs/. gh-pages/
-        # Legacy name from before the key was published as public-key.asc.
-        # Copying never deletes, so it would otherwise be served forever.
-        rm -f gh-pages/KEY.gpg
         cd gh-pages
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        # --force because the branch carries the source .gitignore, which
-        # ignores dists/, pool/, *.asc and *.gpg -- i.e. every file the archive
-        # is made of. Without this the commit silently contains nothing.
+        # gh-pages is an orphan branch holding only the published archive, so
+        # no .gitignore of ours applies here. --force is kept as a guard: this
+        # branch once carried the source .gitignore, whose dists/, pool/, *.asc
+        # and *.gpg rules matched every file the archive is made of, and the
+        # resulting commit was silently empty.
         git add --force .
         git status --short
         if git diff --staged --quiet; then
