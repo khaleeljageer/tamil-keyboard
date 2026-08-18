@@ -1,14 +1,14 @@
 Package: tamil-keyboard
-Version: 1.0.0
+Version: 1.0.1
 Architecture: all
 Maintainer: Khaleel Jageer <jskcse4@gmail.com>
 Installed-Size: 18
 Depends: ibus, ibus-m17n, ibus-gtk3, libglib2.0-bin, procps, dconf-gsettings-backend | gsettings-backend
-Filename: pool/main/t/tamil-keyboard/tamil-keyboard_1.0.0_all.deb
-Size: 5072
-MD5sum: 044f8b14e27822a437925d5df8ab47c4
-SHA1: df8d199e266a1b3e64ad422630e646d61aef79b9
-SHA256: 545e0be4fc77d79a82b0c4ec8c11e093fc3e91ad3f41aebad9d9ab95a6ae08d0
+Filename: pool/main/t/tamil-keyboard/tamil-keyboard_1.0.1_all.deb
+Size: 5204
+MD5sum: 18e657a59b6e4dbe79a75ecdd08f85c5
+SHA1: fd70949035e81ef52b072daad650197adba65293
+SHA256: 5a840cd5b792bd5e227638f6516a1aeb9bd4b97bafa7674e0b3ae53e28bad467
 Section: utils
 Priority: optional
 Homepage: https://github.com/khaleeljageer/tamil-keyboard

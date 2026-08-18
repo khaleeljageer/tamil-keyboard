@@ -1,20 +1,20 @@
 Architectures: amd64
 Codename: stable
 Components: main
-Date: Tue, 18 Aug 2026 06:28:59 +0000
+Date: Tue, 18 Aug 2026 06:49:31 +0000
 Description: Tamil keyboard layout packages for Debian/Ubuntu
 Label: Tamil Keyboard Repository
 Origin: Kaniyam Foundation
 Suite: stable
 MD5Sum:
- 70be984b29f36f00cebac587cfaaf2fe             1041 main/binary-amd64/Packages
- 0a670a9492b0666a338bc44f63ff320e              659 main/binary-amd64/Packages.gz
+ e4d7496879c4abb3a78d1d0a1e807fe6             1041 main/binary-amd64/Packages
+ 0a90060d3ae6594ffb943d4c7c6e5563              658 main/binary-amd64/Packages.gz
 SHA1:
- b78cf245a95ea463ba8cd76a84a5232083efd327             1041 main/binary-amd64/Packages
- f795dad6d7df49a78a9bdf043073b7e1dfed5aa8              659 main/binary-amd64/Packages.gz
+ b9e98d748f2ce5ee7d6a94fd9982e80a21bf2dd9             1041 main/binary-amd64/Packages
+ 35ff76d49802bce54d8e92e5fa82d4dc2943f0cc              658 main/binary-amd64/Packages.gz
 SHA256:
- 752f85a0dad517d927cd64fa67fbc2106d92a1e09ebb8b7b980b3ab7d9a5e719             1041 main/binary-amd64/Packages
- 0d670fdf756b1c859201b85e500884b35c178e660c5e5dcb420bd18f19ac096b              659 main/binary-amd64/Packages.gz
+ 2db4b8b108c943a41b53f126b241ada37d94f4a8cc069d7e0035b18112ed022c             1041 main/binary-amd64/Packages
+ c66520d9b5dc6327dc1ce498902def39cc27c234b52c5826a88931658b8bc479              658 main/binary-amd64/Packages.gz
 SHA512:
- da77aefa72ef5e439726b20d8519129ac9daaf3b2492c07a4fc6862b3f5520530236a221c6aec234cc97498139a1727ba95e0ca9d8058b02f2cd75003e35779c             1041 main/binary-amd64/Packages
- 92a9bef76253badfa351726452f0aa971e64ca8a91ae986ccb2025e398213adcd70764195ab4b7286ad6f70b3962329ca70a5779a9d8c0a3a940eb78221857ca              659 main/binary-amd64/Packages.gz
+ 336cc11c3e0f1ad761c9f3070085a5ce2219e3b6417929fc0e9a4677d98a79479356b5c6df11a86b7b61e088d7ddfa5c7c61fdb12e1cfc963eef2a114f5aa327             1041 main/binary-amd64/Packages
+ be5bd632e9b230ed122706a509407c4201d07851023b61614e89b121261787289d1557821358bc39f7b491bff23065cadc225f60089659f2cc64c6f7331139bd              658 main/binary-amd64/Packages.gz
