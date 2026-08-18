@@ -36,9 +36,10 @@ This directory contains the Debian APT repository for Tamil keyboard packages.
 To use this repository, add it to your system:
 
 ```bash
-echo "deb https://khaleeljageer.github.io/tamil-keyboard stable main" | sudo tee /etc/apt/sources.list.d/tamil-keyboard.list
+sudo install -d -m 0755 /etc/apt/keyrings
+wget -qO- https://khaleeljageer.github.io/tamil-keyboard/public-key.asc | sudo tee /etc/apt/keyrings/tamil-keyboard.asc > /dev/null
 
-wget -qO - https://khaleeljageer.github.io/tamil-keyboard/public-key.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/tamil-keyboard.gpg
+echo "deb [signed-by=/etc/apt/keyrings/tamil-keyboard.asc] https://khaleeljageer.github.io/tamil-keyboard stable main" | sudo tee /etc/apt/sources.list.d/tamil-keyboard.list
 
 sudo apt update
 sudo apt install tamil-keyboard
@@ -56,11 +57,11 @@ EOF
 echo "✓ Repository structure created"
 echo ""
 echo "Next steps:"
-echo "1. Export your GPG public key:"
-echo "   gpg --armor --export B09F79B51206F699 > docs/public-key.asc"
+echo "1. No need to export the public key by hand -- the workflow exports it"
+echo "   from the private key it signs with, so the two cannot drift."
 echo ""
 echo "2. Add GitHub Secrets (Settings → Secrets and variables → Actions):"
-echo "   - GPG_PRIVATE_KEY: Export with 'gpg --armor --export-secret-keys B09F79B51206F699'"
+echo "   - GPG_PRIVATE_KEY: Export with 'gpg --armor --export-secret-keys 2B827D30BE0F7CCA4EE6DE8C521B6C93122B6B88'"
 echo "   - GPG_PASSPHRASE: Your GPG key passphrase (if set)"
 echo ""
 echo "3. Enable GitHub Pages:"
@@ -80,5 +81,5 @@ echo "5. Create a release tag to trigger the build:"
 echo "   git tag -a v1.0.0 -m 'Release 1.0.0'"
 echo "   git push origin v1.0.0"
 echo ""
-echo "See GITHUB-PAGES-APT-REPO.md for detailed instructions."
+echo "See the Releasing section of README.md for details."
 

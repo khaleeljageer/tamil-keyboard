@@ -26,13 +26,14 @@ gsettings set org.gnome.desktop.input-sources sources \
 ### From the APT repository
 
 ```bash
-# Add the repository
-echo "deb https://khaleeljageer.github.io/tamil-keyboard stable main" \
-  | sudo tee /etc/apt/sources.list.d/tamil-keyboard.list
-
 # Add the signing key
-wget -qO - https://khaleeljageer.github.io/tamil-keyboard/public-key.asc \
-  | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/tamil-keyboard.gpg
+sudo install -d -m 0755 /etc/apt/keyrings
+wget -qO- https://khaleeljageer.github.io/tamil-keyboard/public-key.asc \
+  | sudo tee /etc/apt/keyrings/tamil-keyboard.asc > /dev/null
+
+# Add the repository, trusting that key for this repository only
+echo "deb [signed-by=/etc/apt/keyrings/tamil-keyboard.asc] https://khaleeljageer.github.io/tamil-keyboard stable main" \
+  | sudo tee /etc/apt/sources.list.d/tamil-keyboard.list
 
 sudo apt update
 sudo apt install tamil-keyboard
@@ -71,6 +72,21 @@ input sources are left untouched. Running the command twice is harmless.
 
 See `man tamil-keyboard-setup` for the full reference.
 
+### Applying the change
+
+**If you have just installed this package, log out and log back in.**
+
+Installing `tamil-keyboard` pulls in IBus for the first time, and your
+session only picks up IBus as its input method framework when it starts.
+Until you log back in, the layout will not work no matter what is listed
+in your input sources.
+
+If IBus was already running before you started, the layout appears in the
+switcher straight away and no restart is needed.
+
+`tamil-keyboard-setup` checks which of the two applies and tells you
+after it makes the change, so you do not have to guess.
+
 ## Requirements
 
 - IBus as your input method framework (`ibus`, `ibus-m17n` — both pulled
@@ -104,8 +120,39 @@ sudo apt-get install devscripts build-essential debhelper
 - `.github/workflows/` — builds the package and publishes the APT
   repository to GitHub Pages on tagged releases
 
-See `GITHUB-PAGES-APT-REPO.md` and `REPOSITORY-SETUP.md` for repository
-hosting details.
+## Releasing
+
+Publishing is automated. Tag a version and push the tag:
+
+```bash
+git tag -a v1.0.0 -m "Release 1.0.0"
+git push origin v1.0.0
+```
+
+The workflow builds the package, regenerates the APT archive, signs it,
+and pushes the result to the `gh-pages` branch, which GitHub Pages serves
+at https://khaleeljageer.github.io/tamil-keyboard/.
+
+It also exports the public half of the signing key to `public-key.asc`,
+so the key users download always matches the key the archive was signed
+with. No key material is kept in this repository.
+
+Two things must be in place first, both one-time:
+
+- **GitHub Pages** enabled, deploying from the `gh-pages` branch, root
+  folder.
+- **Actions secrets** `GPG_PRIVATE_KEY` (and `GPG_PASSPHRASE`, if the key
+  has one). Export the private key with:
+
+  ```bash
+  gpg --armor --export-secret-keys 2B827D30BE0F7CCA4EE6DE8C521B6C93122B6B88
+  ```
+
+  If `GPG_PRIVATE_KEY` is missing the build fails on purpose: an unsigned
+  archive is rejected by apt, so publishing one would be worse than a
+  failed release.
+
+`./setup-github-pages.sh` prints these steps as a checklist.
 
 ## License
 

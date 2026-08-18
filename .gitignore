@@ -24,11 +24,13 @@ dists/
 pool/
 
 # GPG keys and repository keys (never commit these!)
+# No key material is committed. The public key is published by CI, which
+# exports it from the private key it signs with, so the two cannot drift.
+# These stay as a default-deny guard against committing a key by accident.
 *.asc
 *.gpg
 private-key.asc
 public-key.asc
-KEY.gpg
 
 # Editor and IDE files
 *.swp

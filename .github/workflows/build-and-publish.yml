@@ -9,7 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
+    # Needed so GITHUB_TOKEN may push the rebuilt archive to gh-pages.
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -29,6 +33,9 @@ jobs:
       run: |
         mkdir -p docs/pool/main/t/tamil-keyboard
         mkdir -p docs/dists/stable/main/binary-amd64
+        # GitHub Pages runs Jekyll over the branch by default, which is not
+        # something an apt archive should be filtered through.
+        touch docs/.nojekyll
 
     - name: Copy packages
       run: |
@@ -65,16 +72,27 @@ jobs:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       run: |
-        if [ -n "$GPG_PRIVATE_KEY" ]; then
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          cd docs/dists/stable
-          if [ -n "$GPG_PASSPHRASE" ]; then
-            echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs -o Release.gpg Release
-          else
-            gpg --batch -abs -o Release.gpg Release
-          fi
+        if [ -z "$GPG_PRIVATE_KEY" ]; then
+          echo "::error::GPG_PRIVATE_KEY is not set. An unsigned archive is" \
+               "rejected by apt, so publishing one would be worse than failing."
+          exit 1
+        fi
+
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+        # Publish the public half of the very key we are about to sign with.
+        # Deriving it here means the key users download cannot drift from the
+        # key the signature was made with. Armored, hence .asc: apt reads that
+        # directly via signed-by, so users need no dearmor step.
+        gpg --armor --export > docs/public-key.asc
+        echo "Publishing signing key:"
+        gpg --show-keys --with-fingerprint docs/public-key.asc
+
+        cd docs/dists/stable
+        if [ -n "$GPG_PASSPHRASE" ]; then
+          echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs -o Release.gpg Release
         else
-          echo "Warning: GPG_PRIVATE_KEY not set, skipping signing"
+          gpg --batch -abs -o Release.gpg Release
         fi
     
     - name: Create InRelease file
@@ -82,13 +100,11 @@ jobs:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       run: |
-        if [ -n "$GPG_PRIVATE_KEY" ]; then
-          cd docs/dists/stable
-          if [ -n "$GPG_PASSPHRASE" ]; then
-            echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs --clearsign -o InRelease Release
-          else
-            gpg --batch -abs --clearsign -o InRelease Release
-          fi
+        cd docs/dists/stable
+        if [ -n "$GPG_PASSPHRASE" ]; then
+          echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -abs --clearsign -o InRelease Release
+        else
+          gpg --batch -abs --clearsign -o InRelease Release
         fi
     
     - name: Get version/tag
@@ -101,23 +117,29 @@ jobs:
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
     
-    - name: Prepare repository
-      run: |
-        mkdir -p gh-pages
-        cd gh-pages
-        git init
-        git checkout -b gh-pages || git checkout gh-pages
-        git remote add origin https://github.com/${{ github.repository }}.git || git remote set-url origin https://github.com/${{ github.repository }}.git
-        git fetch origin gh-pages || true
-        git reset --hard origin/gh-pages || true
-    
+    # Checking the branch out this way leaves working push credentials behind,
+    # which a bare "git init" in a subdirectory does not inherit.
+    - name: Check out gh-pages branch
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: gh-pages
+
     - name: Update repository
       run: |
-        cp -r docs/* gh-pages/
+        # "docs/." rather than "docs/*" so dotfiles such as .nojekyll come too.
+        cp -r docs/. gh-pages/
+        # Legacy name from before the key was published as public-key.asc.
+        # Copying never deletes, so it would otherwise be served forever.
+        rm -f gh-pages/KEY.gpg
         cd gh-pages
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add .
+        # --force because the branch carries the source .gitignore, which
+        # ignores dists/, pool/, *.asc and *.gpg -- i.e. every file the archive
+        # is made of. Without this the commit silently contains nothing.
+        git add --force .
+        git status --short
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else

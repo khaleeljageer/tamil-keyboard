@@ -69,11 +69,23 @@ current_sources() {
     echo "$inner"
 }
 
-report_ibus_state() {
-    if ! pgrep -x ibus-daemon >/dev/null 2>&1; then
+# Whether the change is visible straight away depends on IBus already running.
+# On a fresh install it will not be, and the session needs restarting before
+# applications pick IBus up as their input method framework at all.
+report_next_steps() {
+    echo ""
+    if pgrep -x ibus-daemon >/dev/null 2>&1; then
+        echo "IBus is already running, so the layout should be available now."
+        echo "Press Super+Space to switch between input sources."
         echo ""
-        echo "Note: ibus-daemon is not running, so the layout will not appear yet."
-        echo "Log out and back in, or start it with: ibus-daemon -drx"
+        echo "If it does not appear, or applications ignore it, log out and log"
+        echo "back in to finish applying the change."
+    else
+        echo "IBus is not running yet, so the layout will NOT work until you"
+        echo "log out and log back in. Please do that now to finish setting up."
+        echo ""
+        echo "(To try it in this session without logging out, run: ibus-daemon -drx"
+        echo "Applications started before IBus may still need restarting.)"
     fi
 }
 
@@ -86,6 +98,7 @@ add_layout() {
     case "$inner" in
         *"$entry"*)
             echo "$im is already in your input sources; nothing to do."
+            report_next_steps
             return 0
             ;;
     esac
@@ -97,7 +110,7 @@ add_layout() {
     fi
 
     echo "Added $im to your input sources."
-    report_ibus_state
+    report_next_steps
 }
 
 remove_layout() {

@@ -1,0 +1,7 @@
+Origin: Kaniyam Foundation
+Label: Tamil Keyboard Repository
+Codename: stable
+Architectures: amd64 i386 arm64
+Components: main
+Description: Tamil keyboard layout packages for Debian/Ubuntu
+SignWith: 2B827D30BE0F7CCA4EE6DE8C521B6C93122B6B88

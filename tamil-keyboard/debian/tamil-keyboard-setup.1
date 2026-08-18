@@ -23,6 +23,19 @@ Wayland as well as X11.
 .PP
 The requested layout is appended to your existing input sources. Nothing is
 removed or replaced, and running the command twice is harmless.
+.SH APPLYING THE CHANGE
+If IBus is already running, the layout appears in your input source
+switcher immediately and no restart is needed.
+.PP
+If IBus is not running yet \- which is the usual case right after
+installing this package, since it pulls IBus in for the first time \- you
+must
+.B log out and log back in
+before the layout will work. The session needs restarting for
+applications to pick up IBus as their input method framework at all.
+.PP
+.B tamil\-keyboard\-setup
+detects which situation you are in and tells you which applies.
 .SH OPTIONS
 .TP
 .BI \-\-remove " layout"
