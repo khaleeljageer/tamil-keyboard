@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamil Keyboard APT Repository</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1a; --muted: #5a5a5a;
+    --border: #d8d8d8; --code-bg: #f4f4f5; --link: #0b5fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181d; --fg: #e8e8ea; --muted: #a0a2a8;
+      --border: #2e3138; --code-bg: #1e2127; --link: #7aa2ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2.5rem 1.25rem 4rem;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 44rem; margin: 0 auto; }
+  h1 { font-size: 1.75rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.1rem; margin: 2.25rem 0 .6rem; }
+  .sub { color: var(--muted); margin: 0 0 2rem; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: .9rem 1rem; overflow-x: auto;
+    font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  p code, li code {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: .08em .35em; font-size: .9em;
+  }
+  a { color: var(--link); }
+  ul { padding-left: 1.25rem; }
+  footer {
+    margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tamil Keyboard</h1>
+  <p class="sub">An APT repository for the <code>tamil-keyboard</code> package on Debian and Ubuntu.</p>
+
+  <p>
+    The Tamil 99 and Tamil Phonetic layouts already ship with
+    <code>ibus-m17n</code>. This package adds
+    <code>tamil-keyboard-setup</code>, a small command that enables either
+    one for you.
+  </p>
+
+  <h2>Install</h2>
+<pre><code># Add the signing key
+sudo install -d -m 0755 /etc/apt/keyrings
+wget -qO- https://khaleeljageer.github.io/tamil-keyboard/public-key.asc \
+  | sudo tee /etc/apt/keyrings/tamil-keyboard.asc &gt; /dev/null
+
+# Add the repository, trusting that key for this repository only
+echo "deb [signed-by=/etc/apt/keyrings/tamil-keyboard.asc] https://khaleeljageer.github.io/tamil-keyboard stable main" \
+  | sudo tee /etc/apt/sources.list.d/tamil-keyboard.list
+
+sudo apt update
+sudo apt install tamil-keyboard</code></pre>
+
+  <h2>Use</h2>
+  <p>Run it as your normal user, not with <code>sudo</code> — it configures the session it runs in.</p>
+<pre><code>tamil-keyboard-setup tamil99      # or: phonetic
+tamil-keyboard-setup --list       # show current input sources
+tamil-keyboard-setup --remove tamil99</code></pre>
+  <p>
+    Switch between input sources with <strong>Super+Space</strong>. The layout is
+    added alongside your existing sources; nothing is replaced.
+  </p>
+  <p>
+    If you have just installed the package, log out and log back in — your
+    session picks up IBus as its input method framework only at login. The
+    command tells you whether this applies.
+  </p>
+
+  <h2>Repository contents</h2>
+  <ul>
+    <li><a href="dists/stable/InRelease">dists/stable/InRelease</a> — signed release index</li>
+    <li><a href="dists/stable/main/binary-amd64/Packages">dists/stable/main/binary-amd64/Packages</a> — package index</li>
+    <li><a href="pool/main/t/tamil-keyboard/">pool/main/t/tamil-keyboard/</a> — the <code>.deb</code> files</li>
+    <li><a href="public-key.asc">public-key.asc</a> — the archive signing key</li>
+  </ul>
+
+  <footer>
+    Source and issues:
+    <a href="https://github.com/khaleeljageer/tamil-keyboard">github.com/khaleeljageer/tamil-keyboard</a>
+    · GPL-3.0+
+  </footer>
+</main>
+</body>
+</html>
