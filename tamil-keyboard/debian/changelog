@@ -1,3 +1,11 @@
+tamil-keyboard (1.0.1) unstable; urgency=medium
+
+  * No change to the package itself. Released to exercise the publishing
+    pipeline against the reorganised gh-pages branch, which now carries
+    only the published archive.
+
+ -- Khaleel Jageer <jskcse4@gmail.com>  Tue, 18 Aug 2026 12:16:42 +0530
+
 tamil-keyboard (1.0.0) unstable; urgency=medium
 
   * Initial release, replacing the tamil-99-keyboard and
