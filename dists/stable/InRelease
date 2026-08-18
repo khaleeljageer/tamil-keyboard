@@ -1,0 +1,39 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64
+Codename: stable
+Components: main
+Date: Tue, 18 Aug 2026 06:28:59 +0000
+Description: Tamil keyboard layout packages for Debian/Ubuntu
+Label: Tamil Keyboard Repository
+Origin: Kaniyam Foundation
+Suite: stable
+MD5Sum:
+ 70be984b29f36f00cebac587cfaaf2fe             1041 main/binary-amd64/Packages
+ 0a670a9492b0666a338bc44f63ff320e              659 main/binary-amd64/Packages.gz
+SHA1:
+ b78cf245a95ea463ba8cd76a84a5232083efd327             1041 main/binary-amd64/Packages
+ f795dad6d7df49a78a9bdf043073b7e1dfed5aa8              659 main/binary-amd64/Packages.gz
+SHA256:
+ 752f85a0dad517d927cd64fa67fbc2106d92a1e09ebb8b7b980b3ab7d9a5e719             1041 main/binary-amd64/Packages
+ 0d670fdf756b1c859201b85e500884b35c178e660c5e5dcb420bd18f19ac096b              659 main/binary-amd64/Packages.gz
+SHA512:
+ da77aefa72ef5e439726b20d8519129ac9daaf3b2492c07a4fc6862b3f5520530236a221c6aec234cc97498139a1727ba95e0ca9d8058b02f2cd75003e35779c             1041 main/binary-amd64/Packages
+ 92a9bef76253badfa351726452f0aa971e64ca8a91ae986ccb2025e398213adcd70764195ab4b7286ad6f70b3962329ca70a5779a9d8c0a3a940eb78221857ca              659 main/binary-amd64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEK4J9ML4PfMpO5t6MUhtskxIra4gFAmqD+6wACgkQUhtskxIr
+a4hMdA/8CiJ++UDO4thW1Mv1F7LU6mujKK03YeEfC7aoPThlhyUdeOWMYE2vrxrJ
+SjACtBg1lvP+XFfznqnxk93ZU+7v1XFSsgWx/W3oPnOJb2Z1eM/ssw12/4zOlmhE
+nq3d/8OaRzIq9ALT9MvPXeLk2nrQXuqPh/BfovO+IF/hCjj/O3tKYa+o4iigZf2Q
+u/6pAB8zYTBkCNOYtKSFfYdYXviKoF1X6L7QIYKbWLp1qlHxh2hsNuQXZUQnd486
+ZOvXNgyn72HSa3Nq2sltNKeP+UtluQyZrwl7BqKZv8FoMi+XqDoPzab9TolaMbNu
+t2gfJiho3YiE57d92TkI8x5IOPypY2frO9DII+Pxe98CYOlejcM29jOMKQyw6UnZ
+yPGnQpE7iOmSb6jU7dI+BamJYvBk96AgBfd13Y/bSc2jmC3mFIi7weldchbAlShS
+wacZGYU7HEWDJR/g3jabwWIVt6DiqnB52nKkBk8Oi7p0T4A168kQbY8ITdY/NRAs
+GL1500dvQEG3QHQl8nvcvxZ7gA8naDyn8iD2iQbnpwU/Y74WCYIUkd2q2ANaO45M
+70IjqtckZPxShzKQZGj87Lge8d6mDC1zLOJM4xy0n5pVxIsIFISkNGecYYkMyCOL
+D/Su8agxTIVx3hZS/Njghe7M+T9jzqUlDsx4RPorhDF+gbT0wqg=
+=GQnt
+-----END PGP SIGNATURE-----

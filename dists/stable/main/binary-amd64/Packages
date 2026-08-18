@@ -1,0 +1,24 @@
+Package: tamil-keyboard
+Version: 1.0.0
+Architecture: all
+Maintainer: Khaleel Jageer <jskcse4@gmail.com>
+Installed-Size: 18
+Depends: ibus, ibus-m17n, ibus-gtk3, libglib2.0-bin, procps, dconf-gsettings-backend | gsettings-backend
+Filename: pool/main/t/tamil-keyboard/tamil-keyboard_1.0.0_all.deb
+Size: 5072
+MD5sum: 044f8b14e27822a437925d5df8ab47c4
+SHA1: df8d199e266a1b3e64ad422630e646d61aef79b9
+SHA256: 545e0be4fc77d79a82b0c4ec8c11e093fc3e91ad3f41aebad9d9ab95a6ae08d0
+Section: utils
+Priority: optional
+Homepage: https://github.com/khaleeljageer/tamil-keyboard
+Description: helper to enable Tamil input methods in IBus
+ The Tamil 99 and Tamil Phonetic layouts ship with ibus-m17n, but enabling
+ them means knowing which input source to add. This package provides
+ tamil-keyboard-setup, a small command that adds either layout to your
+ desktop input sources for you.
+ .
+ The command runs as your normal user in your own session, so it works on
+ both Wayland and X11, and leaves your existing input sources in place
+ rather than replacing them.
+
